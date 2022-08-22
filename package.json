@@ -18,7 +18,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "ethereumjs-tx": "^2.1.2",
-    "express": "^4.18.1",
     "keccak": "^3.0.2",
     "node-schedule": "^2.1.0",
     "solc": "^0.8.9",
