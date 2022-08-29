@@ -39,13 +39,15 @@ const getContributions = async () => {
 /* Init Contract and set default Variable *Contract* */
 async function init() {
     try {
-        contract = new web3.eth.Contract(Artefact.abi, "0x03E3b9a69FA69bF32F51D4Eb912A80482e1ad003",  {
+        // console.log("Logger", )
+        contract = new web3.eth.Contract(Artefact.abi, Artefact.networks[5].address,  {
             from: '0xb954de63aAc9dc7D03f82046c4505EA27c16b5e1', // default from address
-            gasPrice: '550000000' // default gas price in wei, 20 gwei in this case
         })
+
+        // console.log("Contratc instance", contract);
+        // gasPrice: 20e9 // default gas price in wei, 20 gwei in this case
     } catch (error) {
         throw "Unable to get contract instance";
-        console.log("error")
     }
 }
 
@@ -55,18 +57,18 @@ async function initProjectContract(address) {
     try {
         projectContract = new web3.eth.Contract(projArt.abi, address,  {
             from: '0xb954de63aAc9dc7D03f82046c4505EA27c16b5e1', // default from address
-            gasPrice: '550000000' // default gas price in wei, 20 gwei in this case
         })
+        // gasPrice: 20e9 // default gas price in wei, 20 gwei in this case
         console.log("project start at ", projectContract._address)
     } catch (error) {
         throw "Unable to get contract instance; check your address !";
     }  
 }
 
-/* Get Stable token (USDT) */
+/* Get Stable token (USDC) */
 async function getStableToken() {
     try {
-        stableToken = new web3.eth.Contract(TokenAbi.abi, "0xfe4F5145f6e09952a5ba9e956ED0C25e3Fa4c7F1")
+        stableToken = new web3.eth.Contract(TokenAbi.abi, "0xde637d4c445ca2aae8f782ffac8d2971b93a4998")
         //console.log(stableToken)
     } catch (error) {
         throw "Unable to get stable token";
@@ -119,7 +121,8 @@ exports.createproject = async (req, res) => {
             "0xfe4F5145f6e09952a5ba9e956ED0C25e3Fa4c7F1",
             Number(body.ref),
             projectGoal,
-            body.title).send({gasLimit: 5000000})
+            // body.title).send({gasLimit: 5000000})
+            body.title).send()
              .on('transactionHash', function(hash){
                 console.log("Hash", hash)
              })
@@ -161,7 +164,7 @@ exports.getProjectById = async (req, res) => {
             return res.status(500).json({ msg: "unable to create project", success: false, data: error.error });
         }
     } catch (error) {
-        console.log("Error", error);
+        console.log("Error trying", error);
         return res.status(500);
     }
 };
@@ -258,7 +261,8 @@ exports.addCashIn = async (req, res) => {
         await initProjectContract(req.params.address);
         const amount = req.body.amount * 1e6;
         const today = new Date().toISOString();
-        const cashin = await projectContract.methods.cashIn(today, req.body.address, req.body.reason, amount).send({gasLimit: 5000000})
+        // const cashin = await projectContract.methods.cashIn(today, req.body.address, req.body.reason, amount).send({gasLimit: 5000000})
+        const cashin = await projectContract.methods.cashIn(today, req.body.address, req.body.reason, amount).send()
         return res.status(200).json({ msg: "Success", success: true, data: cashin });
     } catch (error) {
         return res.status(500).json({ msg: "unable to get data", success: false, data: error.error });
@@ -274,7 +278,8 @@ exports.sendCashOut = async (req, res) => {
         await initProjectContract(req.params.address);
         const amount = req.body.amount * 1e6;
         const today = new Date().toISOString();
-        const cashout = await projectContract.methods.cashOut(today, req.body.address, req.body.reason, amount).send({gasLimit: 5000000})
+        // const cashout = await projectContract.methods.cashOut(today, req.body.address, req.body.reason, amount).send({gasLimit: 5000000})
+        const cashout = await projectContract.methods.cashOut(today, req.body.address, req.body.reason, amount).send()
         return res.status(200).json({ msg: "Success", success: true, data: cashout });
     } catch (error) {
         return res.status(500).json({ msg: "unable to get data", success: false, data: error.error });
